@@ -1,0 +1,6 @@
+You can run your jar file by creating a batch file. First open a blank notepad file and paste this into it:
+@echo off
+cmd /k java -jar TreasureHunt.jar
+
+Save it as launcher.bat and file type All Files. That will make it an executable batch file. Double clicking on it will run the jar file
+so long as they are both in the same folder.
