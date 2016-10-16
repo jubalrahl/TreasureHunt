@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package treasurehunt;
+
 
 
 import java.util.Scanner;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.Class;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +57,7 @@ public class Location {
             for(int i = 0; i < capacity; i++){
                 itemArray[i] = empty;
             }
-            
+           
         }
         
         public void makeNorth (Location locate, String message) {
@@ -94,20 +96,23 @@ public class Location {
 
         public void move (Location place, String text) {
             if (text.equals("can't")) {
-                inventory.showText.show("You can't go that way.");   
+                System.out.println("You can't go that way."); 
+                inventory.thisOne.updateText("You can't go that way.");
             }
             else if(text.length() > 5){
                 if(text.substring(0, 5).equals("climb")){
                     this.climb(text.substring(6));
                 }
                 else {
-                    inventory.showText.show(text);
+                    System.out.println(text);
+                    inventory.thisOne.updateText(text);
                     inventory.gps.navigate(place);
                     place.activate(inventory);
                 }
             }
             else {
-                inventory.showText.show(text);
+                System.out.println(text);
+                inventory.thisOne.updateText(text);
                 inventory.gps.navigate(place);
                 place.activate(inventory);
             }
@@ -119,11 +124,18 @@ public class Location {
          */
         public void activate (Inventory oldInventory) {
             inventory = oldInventory;
-            
+            inventory.thisOne.updater.addActionListener(new ActionListener() {
+    			public void actionPerformed(ActionEvent d) {
+    				
+    				inventory.thisOne.butFlag = true;
+    			
+    			}
+    		});
             //location description
             //System.out.println("You are " + name);
-            inventory.showText.show("\n");
-            inventory.showText.show(description);
+            System.out.println("\n");
+            System.out.println(description);
+            inventory.thisOne.updateText(description);
             
             //event checker
             for(Event x : eventArray){
@@ -138,6 +150,8 @@ public class Location {
             for(Item x : itemArray){
                 if (x.visable == true && !x.name.equals("empty")) {
                     System.out.println("There is a" + x.description + " here.");
+                    inventory.thisOne.updateText("There is a" + x.description + " here.");
+                    
                 }
             }
             
@@ -147,9 +161,29 @@ public class Location {
             //command
             while (inventory.gps.presentLoc == this) {
                 Scanner user_input = new Scanner (System.in);
+                inventory.thisOne.updateText("What do you do?");
                 System.out.print("What do you do?: ");
-                String user_command = user_input.nextLine();
-                translate (user_command.toLowerCase());
+                //String user_command = user_input.nextLine();
+ 
+              
+                	while(inventory.thisOne.butFlag == false){
+                		
+                		try {
+							Thread.sleep(4000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+                    }
+                	
+                	
+                if(inventory.thisOne.butFlag == true){
+                	String user_command = inventory.thisOne.theBottomText.getText();
+                	inventory.thisOne.theBottomText.setText("");
+                	inventory.thisOne.butFlag = false;
+                	translate (user_command.toLowerCase());
+                	
+                	}
             }
         }
         
@@ -157,6 +191,7 @@ public class Location {
         public void translate (String userInput){
             //find and seperate the first 'action' word
             boolean first = true;
+            
             int count = 0;
             while (first){
                 if(Character.isWhitespace(userInput.charAt(count))){
@@ -232,10 +267,12 @@ public class Location {
                     break;
                 case "stop":
                     System.out.println("You have stopped the code.");
+                    inventory.thisOne.updateText("You have stopped the code.");
                     this.move(inventory.up, inventory.upWords);
                     break;
                 default:
                     System.out.println("I don't understand.  Please try again.");
+                    inventory.thisOne.updateText("I don't understand.  Please try again.");
                     break;
             }
         }
@@ -308,6 +345,8 @@ public class Location {
                     if(none){
                         System.out.println("I don't understand where you want to go. \n"
                             + "Please try picking a direction.");
+                        inventory.thisOne.updateText("I don't understand where you want to go. \n"
+                                + "Please try picking a direction.");
                         
                     }
                     
@@ -336,29 +375,38 @@ public class Location {
             }
             if(climbFound){
                 System.out.println("You investigate the climb.");
+                inventory.thisOne.updateText("You investigate the climb.");
                 if (odds > 0.8){
                     System.out.println("This climb looks fairly safe.  You should be able to do it.");
+                    inventory.thisOne.updateText("This climb looks fairly safe.  You should be able to do it.");
                 }
                 else if (odds > 0.5){
                     System.out.println("This climb looks tough, but you can probably make it.");
+                    inventory.thisOne.updateText("This climb looks tough, but you can probably make it.");
                 }
                 else if (odds > 0.3){
                     System.out.println("This climb looks dangerous, I wouldn't do it.");
+                    inventory.thisOne.updateText("This climb looks dangerous, I wouldn't do it.");
                 }
                 else {
                     System.out.println("There is no way you'll make this climb... don't do it!");
+                    inventory.thisOne.updateText("There is no way you'll make this climb... don't do it!");
                 }
                 System.out.println("Do you still wish to make the climb?");
+                inventory.thisOne.updateText("Do you still wish to make the climb?");
         
                 Scanner user_input = new Scanner (System.in);
                 System.out.print("yes or no: ");
-                String user_command = user_input.nextLine();
+                inventory.thisOne.updateText("yes or no: ");
+                //String user_command = user_input.nextLine();
+                String user_command = inventory.thisOne.theBottomText.getText();
                 switch (user_command.toLowerCase()){
                     case "yes":
                     case "y":
                     case "yup":
                     case "sure":
                         System.out.println("You start to climb.");
+                        inventory.thisOne.updateText("You start to climb.");
                         if(odds >= Math.random()){
                             String text;
                             if (odds > 0.8){
@@ -379,6 +427,7 @@ public class Location {
                         }
                         else {
                             System.out.println("You fall and break your neck. \n \n");
+                            inventory.thisOne.updateText("You fall and break your neck. \n \n");
                             this.move(inventory.up, inventory.upWords);
                         }
                         break;
@@ -386,16 +435,19 @@ public class Location {
                     case "n":
                     case "nope":
                         System.out.println("You decide not to make the climb.");
+                        inventory.thisOne.updateText("You decide not to make the climb.");
                         
                         break;
                     default:
                         System.out.println("I don't understand");
+                        inventory.thisOne.updateText("I don't understand");
                         
                         break;
                 }
             }
             else {
                 System.out.println("You can't climb " + secondWord + " here.");
+                inventory.thisOne.updateText("You can't climb " + secondWord + " here.");
                 
             }
         }
@@ -415,7 +467,9 @@ public class Location {
             if (secondWord.equals("empty")){
                 Scanner user_input = new Scanner (System.in);
                 System.out.print("What do you want to get?: ");
+                inventory.thisOne.updateText("What do you want to get?: ");
                 String user_command = user_input.nextLine();
+                user_command = inventory.thisOne.theBottomText.getText();
                 secondWord = user_command.toLowerCase();
             }
             int itemSpot = -1;
@@ -442,10 +496,13 @@ public class Location {
             }
             if(itemSpot == -1){
                 System.out.println(secondWord + " is not here.");
+                inventory.thisOne.updateText(secondWord + " is not here.");
                 
             }
             else if(inventorySpot == -1){
                 System.out.println("Your inventory is full. \n"
+                        + "You will have to drop an item before you pick anything else up.");
+                inventory.thisOne.updateText("Your inventory is full. \n"
                         + "You will have to drop an item before you pick anything else up.");
                 
             }
@@ -454,6 +511,7 @@ public class Location {
                 inventory.itemArray[inventorySpot] = this.itemArray[itemSpot];
                 this.itemArray[itemSpot] = empty;
                 System.out.println("You pick up the " + inventory.itemArray[inventorySpot].name);
+                inventory.thisOne.updateText("You pick up the " + inventory.itemArray[inventorySpot].name);
                 inventory.itemArray[inventorySpot].makeVisable();
             }
             boolean noEvent = true;
@@ -462,6 +520,7 @@ public class Location {
                     
                     if(x.trigger.substring(0, 3).equals("get") && secondWord.endsWith(x.trigger.substring(4))){
                         System.out.println(x.trigger);
+                        inventory.thisOne.updateText(x.trigger);
                         noEvent = false;
                         x.activate(inventory);
                     }
@@ -496,9 +555,12 @@ public class Location {
             }
             if(itemSpot == -1){
                 System.out.println("You don't have " + secondWord);
+                inventory.thisOne.updateText("You don't have " + secondWord);
             }
             else if(locSpot == -1){
                 System.out.println("You can't leave the " + inventory.itemArray[itemSpot].name + " here. \n"
+                        + "There is not enough room for it.");
+                inventory.thisOne.updateText("You can't leave the " + inventory.itemArray[itemSpot].name + " here. \n"
                         + "There is not enough room for it.");
             }
             
@@ -506,6 +568,7 @@ public class Location {
                 this.itemArray[locSpot] = inventory.itemArray[itemSpot];
                 inventory.itemArray[itemSpot] = empty;
                 System.out.println("You drop the " + this.itemArray[locSpot].name);
+                inventory.thisOne.updateText("You drop the " + this.itemArray[locSpot].name);
             }
         }
         
@@ -517,6 +580,7 @@ public class Location {
                 for(Item x : itemArray){
                     if(secondWord.endsWith(x.name)){
                         System.out.println("It is a" + x.description);
+                        inventory.thisOne.updateText("It is a" + x.description);
                         break;
                     }
                 }
@@ -525,6 +589,7 @@ public class Location {
                 for(Item x : inventory.itemArray){
                     if(secondWord.endsWith(x.name)){
                         System.out.println("You have a" + x.description);
+                        inventory.thisOne.updateText("You have a" + x.description);
                         break;
                     }
                 }
@@ -536,6 +601,7 @@ public class Location {
                         x.makeVisable();
                         notFound = false;
                         System.out.println("You find a " + x.description + " hidden in the " + x.searchTrigger);
+                        inventory.thisOne.updateText("You find a " + x.description + " hidden in the " + x.searchTrigger);
                     }
                 }
                 
@@ -557,6 +623,7 @@ public class Location {
                 }
                 if (notFound){
                     System.out.println("You couldn't find anything");
+                    inventory.thisOne.updateText("You couldn't find anything");
                 }
                 
             }
@@ -590,6 +657,7 @@ public class Location {
                 }
                 else {
                     System.out.println("You don't have the " + secondWord);
+                    inventory.thisOne.updateText("You don't have the " + secondWord);
                 }
             }
         }
