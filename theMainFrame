@@ -1,0 +1,90 @@
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import java.awt.*;
+
+public class theMainFrame extends JFrame {
+
+	
+	public JPanel twoPanelHolder;
+	public JPanel displayPanel;
+	public JPanel writingPanel;
+	public JScrollPane scrollListPanel;
+	public JScrollPane scrollListPanel2;
+	
+	public JTextArea theTopText;
+	public JTextArea theBottomText;
+	public JButton updater;
+	public Boolean butFlag;
+	
+	
+		public theMainFrame(){
+	
+		String dude = "";
+		String tRex = "";
+		butFlag = false;
+		
+		theTopText = new JTextArea(500,80);
+		theTopText.setEditable(false);
+		theTopText.setText(dude);
+		
+		theBottomText = new JTextArea(500,80);
+		theBottomText.setText(tRex);
+		
+		theTopText.setWrapStyleWord(true);
+		theTopText.setLineWrap(true);
+		
+		theBottomText.setWrapStyleWord(true);
+		theBottomText.setLineWrap(true);
+		
+		twoPanelHolder = new JPanel();
+		displayPanel = new JPanel();
+		writingPanel = new JPanel();
+		
+		
+		displayPanel.add(theTopText);
+		writingPanel.add(theBottomText);
+		
+		scrollListPanel = new JScrollPane(displayPanel);
+		scrollListPanel2 = new JScrollPane(writingPanel);
+		
+		this.setPreferredSize(new Dimension(1000,600));
+		
+		twoPanelHolder.setPreferredSize(new Dimension(900, 599));
+		displayPanel.setPreferredSize(new Dimension(900, 500));
+		writingPanel.setPreferredSize(new Dimension(900, 500));
+		scrollListPanel.setPreferredSize(new Dimension(800, 300));
+		scrollListPanel2.setPreferredSize(new Dimension(800, 250));
+		
+		twoPanelHolder.add(scrollListPanel, BorderLayout.NORTH);
+		twoPanelHolder.add(scrollListPanel2, BorderLayout.SOUTH);
+		
+		updater = new JButton("update");
+		
+		
+		
+		
+		this.add(twoPanelHolder,BorderLayout.WEST);
+		this.add(updater, BorderLayout.EAST);
+		
+		
+		
+		
+		}
+	
+		public void updateText(String newStuff){
+			
+			theTopText.append("\n" + newStuff);
+		}
+		
+		
+
+		
+}
