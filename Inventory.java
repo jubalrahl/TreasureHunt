@@ -3,22 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package treasurehunt;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.JFrame;
 
 /**
  *
  * @author Christopher
  */
 public class Inventory extends Location {
-    public Show showText;
-    
+       public theMainFrame thisOne;
     
     public Inventory (String n, int num, String des, int eventNum, int capacity){
         super (n, num, des, eventNum, capacity);
+        thisOne = new theMainFrame();
+		thisOne.setSize(1200,600);
+		thisOne.setLocationRelativeTo(null);
+		thisOne.setVisible(true);
+		thisOne.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public int wallet = 5;
@@ -43,9 +49,7 @@ public class Inventory extends Location {
         
     }
     
-    public void loadShow(Show text){
-        this.showText = text;
-    }
+    
     
     public class Monitor {
         public Location presentLoc;
